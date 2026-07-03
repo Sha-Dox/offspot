@@ -1,9 +1,9 @@
-# Depot — Style Reference
+# Offspot — Style Reference
 > Dark server-rack terminal. A near-black developer console where one green LED signals action and the rest of the UI whispers in graphite.
 
 **Theme:** dark
 
-Depot uses a developer-console language: a near-black canvas, hairline green-tinted borders, and a single vivid green accent that lights up the only button on the page. The interface feels like a terminal that grew up into a marketing site — compact, monospace-adjacent, and confident in its restraint. Typography splits into three Red Hat families: Display for tight tracked-out headlines, Text for slightly letter-spaced body copy, and Mono for code and terminal-style labels, creating a tri-tonal typographic system. Surfaces stack in barely-perceptible lifts of near-black, separated by thin 1px hairline borders with subtle green ambient glows — no drop shadows, just inset top highlights. Color appears sparingly: green for actions and status, blue for inline links, and a soft violet for secondary decorative accents. The whole system reads as 'infrastructure you can trust' rather than 'consumer app you enjoy'.
+Offspot uses a developer-console language: a near-black canvas, hairline green-tinted borders, and a single vivid green accent that lights up the only button on the page. The interface feels like a terminal that grew up into a marketing site — compact, monospace-adjacent, and confident in its restraint. Typography splits into three Red Hat families: Display for tight tracked-out headlines, Text for slightly letter-spaced body copy, and Mono for code and terminal-style labels, creating a tri-tonal typographic system. Surfaces stack in barely-perceptible lifts of near-black, separated by thin 1px hairline borders with subtle green ambient glows — no drop shadows, just inset top highlights. Color appears sparingly: green for actions and status, blue for inline links, and a soft violet for secondary decorative accents. The whole system reads as 'infrastructure you can trust' rather than 'consumer app you enjoy'.
 
 ## Tokens — Colors
 
@@ -136,12 +136,12 @@ Subtle dark fill in Obsidian (#1a191b), 1px border in Basalt (#2b292d), text in 
 Full-bleed strip in Carbon (#04040b) with a 1px bottom border in Moss Border (#2d5736). Text at 13-14px in Ash with a sparkle emoji prefix. Links within are in Link Blue (#70b8ff). Height ~40px, centered content.
 
 ### Feature Card
-**Role:** Product capability cards (Depot CI, Container Builds, GitHub Actions)
+**Role:** Product capability cards (Offspot CI, Container Builds, GitHub Actions)
 
 Background in Graphite (#121113), 1px border in Basalt (#2b292d), 6px radius, 24px padding. Top label in uppercase caption text (12px, letter-spacing 0.025em, weight 500) in Signal Green for the active/featured card or Fog gray for secondary. Title in Chalk at 18-20px weight 600. Content body in Silver at 14-15px. The active card may have a Moss Border (#2d5736) outline instead of Basalt.
 
 ### CI Workflow Comparison Panel
-**Role:** Side-by-side build log comparison (GitHub Actions vs Depot CI)
+**Role:** Side-by-side build log comparison (GitHub Actions vs Offspot CI)
 
 Dark container in Graphite (#121113) with 1px border in Basalt, 6px radius. Header bar in Obsidian with a section label in Red Hat Mono 14px. Each workflow column separated by a 1px hairline in Iron (#323035). Job rows use Red Hat Mono for job names, Silver for status text, and Signal Green or Fog for status indicators (pending/success).
 
@@ -244,7 +244,7 @@ No distinct primary action color was observed; use the extracted neutral button 
 
 ## Typographic Tracking Philosophy
 
-The system uses a distinctive two-direction tracking approach that creates typographic contrast: body text (10-20px) runs at +0.025em (positive tracking) which gives the dense dark UI an airy, readable quality — letters breathe slightly apart. Display text (36px+) runs at -0.025em (negative tracking) which tightens headlines into a compressed, industrial block. This inversion is the opposite of most design systems and is a signature Depot choice. Never flatten both to normal tracking — the contrast between open body and tight display is what makes the typography feel intentional rather than default.
+The system uses a distinctive two-direction tracking approach that creates typographic contrast: body text (10-20px) runs at +0.025em (positive tracking) which gives the dense dark UI an airy, readable quality — letters breathe slightly apart. Display text (36px+) runs at -0.025em (negative tracking) which tightens headlines into a compressed, industrial block. This inversion is the opposite of most design systems and is a signature Offspot choice. Never flatten both to normal tracking — the contrast between open body and tight display is what makes the typography feel intentional rather than default.
 
 ## Similar Brands
 

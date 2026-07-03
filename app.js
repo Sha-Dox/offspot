@@ -1,5 +1,5 @@
 /* =============================================
-   Depot — Spotify Downloader
+   Offspot — Spotify Downloader
    ============================================= */
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
