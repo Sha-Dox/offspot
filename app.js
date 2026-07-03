@@ -416,8 +416,6 @@ async function handleFetch(url) {
 function init() {
   const input = $('#url-input');
   const fetchBtn = $('#fetch-btn');
-  const settingsToggle = $('#settings-toggle');
-  const settingsPanel = $('#settings-panel');
 
   input.addEventListener('input', () => { fetchBtn.disabled = !input.value.trim(); });
 
@@ -440,10 +438,6 @@ function init() {
     setTimeout(() => {
       if (parseSpotifyUrl(input.value.trim())) fetchBtn.click();
     }, 50);
-  });
-
-  settingsToggle.addEventListener('click', () => {
-    settingsPanel.classList.toggle('hidden');
   });
 }
 
