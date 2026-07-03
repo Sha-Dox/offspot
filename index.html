@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depot — Spotify Downloader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;0,500;0,600;0,700&family=Red+Hat+Text:ital,wght@0,400;0,500;0,600;0,700&family=Red+Hat+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <svg class="logo-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="1" y="1" width="18" height="18" rx="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="10" cy="10" r="3" fill="currentColor"/>
+        </svg>
+        <span class="logo-text">depot</span>
+      </a>
+      <nav class="nav">
+        <span class="nav-status">
+          <span class="status-dot"></span>
+          <span class="status-label">ready</span>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">drop a link.<br>grab the track.</h1>
+        <p class="hero-subtitle">Paste any Spotify track or playlist URL. Pick what you want, download the audio directly.</p>
+        <div class="input-group">
+          <div class="input-wrapper">
+            <input type="text" id="url-input" class="input" placeholder="https://open.spotify.com/track/..." spellcheck="false" autofocus>
+            <button id="fetch-btn" class="btn btn-primary" disabled>Fetch</button>
+          </div>
+          <p class="input-hint">Supports tracks, playlists, albums, and episodes</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div id="result-content"></div>
+    </section>
+
+    <section id="settings" class="settings">
+      <button class="btn btn-ghost settings-toggle" id="settings-toggle">Settings</button>
+      <div class="settings-panel hidden" id="settings-panel">
+        <div class="settings-field">
+          <label class="settings-label">Data Source</label>
+          <p class="settings-hint" style="color:var(--color-silver)">Spotify metadata via <code>wolfXspotify</code>. Audio sourced from <code>Piped</code> (YouTube frontend) &mdash; direct audio stream downloads, no tabs.</p>
+        </div>
+        <div class="settings-field">
+          <label class="settings-label">Rate Limits</label>
+          <p class="settings-hint" style="color:var(--color-silver)">wolfXspotify: 30 req / 15 min. Piped instances rotate on failure. 300ms delay between downloads.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-text">depot &mdash; spotify downloader</span>
+    <span class="footer-version">v0.1.0</span>
+  </footer>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
