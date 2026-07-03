@@ -76,31 +76,66 @@ const Piped = {
     throw new Error('All Piped instances failed');
   },
 
-  async search(query) {
+  async searchVideoId(query) {
     const data = await this._fetch(`/search?q=${encodeURIComponent(query)}&filter=music_songs`);
-    if (!data.items || !data.items.length) {
-      const fallback = await this._fetch(`/search?q=${encodeURIComponent(query)}&filter=videos`);
-      return fallback.items || [];
+    if (data.items && data.items.length) {
+      return data.items[0].url.replace(/^\/watch\?v=/, '');
     }
-    return data.items;
-  },
-
-  async getStreams(videoId) {
-    const id = videoId.replace(/^\/watch\?v=/, '');
-    return this._fetch(`/streams/${id}`);
-  },
-
-  async getAudioUrl(query) {
-    const items = await this.search(query);
-    if (!items.length) return null;
-    const streams = await this.getStreams(items[0].url);
-    if (!streams.audioStreams || !streams.audioStreams.length) return null;
-    const best = streams.audioStreams
-      .filter(a => a.mimeType && a.mimeType.includes('audio'))
-      .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
-    return best ? { url: best.url, quality: best.quality, title: streams.title } : null;
+    const fallback = await this._fetch(`/search?q=${encodeURIComponent(query)}&filter=videos`);
+    if (fallback.items && fallback.items.length) {
+      return fallback.items[0].url.replace(/^\/watch\?v=/, '');
+    }
+    return null;
   },
 };
+
+const Cobalt = {
+  _instances: [
+    'https://api.cobalt.tools',
+    'https://cobalt-api.kwiatekmiki.com',
+    'https://cobalt.api.timelessnesses.me',
+  ],
+  _idx: 0,
+
+  get _base() { return this._instances[this._idx]; },
+
+  async getAudioUrl(youtubeId) {
+    const ytUrl = `https://www.youtube.com/watch?v=${youtubeId}`;
+    for (let attempt = 0; attempt < this._instances.length; attempt++) {
+      try {
+        const res = await fetch(this._base, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: ytUrl,
+            downloadMode: 'audio',
+            audioFormat: 'mp3',
+          }),
+        });
+        if (!res.ok) throw new Error(`Cobalt error: ${res.status}`);
+        const data = await res.json();
+        if (data.status === 'tunnel' || data.status === 'redirect') {
+          return data.url;
+        }
+        if (data.status === 'error') throw new Error(data.error?.code || 'Cobalt failed');
+        throw new Error('Unknown cobalt response');
+      } catch {
+        this._idx = (this._idx + 1) % this._instances.length;
+      }
+    }
+    throw new Error('All Cobalt instances failed');
+  },
+};
+
+async function getAudioForQuery(query) {
+  const videoId = await Piped.searchVideoId(query);
+  if (!videoId) return null;
+  const url = await Cobalt.getAudioUrl(videoId);
+  return url ? { url, query } : null;
+}
 
 function showToast(message, type = 'info', duration = 4000) {
   const container = $('#toast-container');
@@ -272,11 +307,11 @@ async function downloadSingle(query, btn) {
   btn.disabled = true;
   btn.textContent = 'Searching...';
   try {
-    const result = await Piped.getAudioUrl(query);
+    const result = await getAudioForQuery(query);
     if (!result) { showToast('No audio found', 'error'); btn.disabled = false; btn.textContent = 'Download'; return; }
-    triggerDownload(result.url, result.title || query);
+    triggerDownload(result.url, result.query);
     btn.textContent = 'Done';
-    showToast(`Downloading: ${result.title}`, 'success');
+    showToast(`Downloading: ${result.query}`, 'success');
   } catch (err) {
     showToast(err.message, 'error');
     btn.disabled = false;
@@ -309,31 +344,44 @@ async function downloadSelected() {
 
   let done = 0;
   let failed = 0;
+  const total = indices.length;
 
-  for (const i of indices) {
+  const updateProgress = () => {
+    const pct = Math.round(((done + failed) / total) * 100);
+    progressFill.style.width = `${pct}%`;
+    progressText.textContent = `${done + failed} / ${total} (${failed} failed)`;
+  };
+
+  const processTrack = async (i) => {
     const t = _playlistTracks[i];
     const query = `${t.title} ${t.artist}`.trim();
     const statusEl = $(`#track-status-${i}`);
-    if (statusEl) statusEl.textContent = 'searching...';
-    if (statusEl) statusEl.className = 'track-status searching';
+    if (statusEl) { statusEl.textContent = 'searching...'; statusEl.className = 'track-status searching'; }
 
     try {
-      const result = await Piped.getAudioUrl(query);
+      const result = await getAudioForQuery(query);
       if (!result) throw new Error('not found');
-      triggerDownload(result.url, result.title || query);
+      triggerDownload(result.url, result.query);
       if (statusEl) { statusEl.textContent = 'done'; statusEl.className = 'track-status done'; }
       done++;
     } catch {
       if (statusEl) { statusEl.textContent = 'failed'; statusEl.className = 'track-status failed'; }
       failed++;
     }
+    updateProgress();
+  };
 
-    const pct = Math.round(((done + failed) / indices.length) * 100);
-    progressFill.style.width = `${pct}%`;
-    progressText.textContent = `${done + failed} / ${indices.length} (${failed} failed)`;
+  const concurrency = 3;
+  const queue = [...indices];
 
-    await new Promise(r => setTimeout(r, 300));
-  }
+  const workers = Array.from({ length: concurrency }, async () => {
+    while (queue.length) {
+      const i = queue.shift();
+      if (i !== undefined) await processTrack(i);
+    }
+  });
+
+  await Promise.all(workers);
 
   dlBtn.disabled = false;
   dlBtn.textContent = 'Download Selected';
